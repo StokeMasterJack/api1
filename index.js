@@ -27,22 +27,25 @@ app.get('/pos.json', (req, res) => {
     let q = req.query;
     const vendorId1 = q.vendorId
     const status1 = q.status
-    const status = status1==='' ? null: status1;
+    const status = status1 === '' || status1 === undefined ? null : status1;
     const vendorId = vendorId1 ? parseInt(vendorId1) : null;
 
-    // if (vendorId !== null && status !== null) {
-    //     res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
-    // } else if (vendorId !== null && status === null) {
-    //     res.send(poSampleData.filter(po => po.vendorId === vendorId))
-    // } else if (vendorId === null && status !== null) {
-    //     res.send(poSampleData.filter(po => po.status === status))
-    // }else if(vendorId === null && status === null){
-    //     res.send(poSampleData)
-    // }else {
-    //     res.send(poSampleData)
-    // }
+    console.log(vendorId);
+    console.log(status);
 
-    res.send(poSampleData)
+    if (vendorId !== null && status !== null) {
+        res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
+    } else if (vendorId !== null && status === null) {
+        res.send(poSampleData.filter(po => po.vendorId === vendorId))
+    } else if (vendorId === null && status !== null) {
+        res.send(poSampleData.filter(po => po.status === status))
+    } else if (vendorId === null && status === null) {
+        res.send(poSampleData)
+    } else {
+        res.send(poSampleData)
+    }
+
+    // res.send(poSampleData)
 
 
 })
