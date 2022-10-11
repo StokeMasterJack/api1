@@ -30,17 +30,19 @@ app.get('/pos.json', (req, res) => {
     const status = status1==='' ? null: status1;
     const vendorId = vendorId1 ? parseInt(vendorId1) : null;
 
-    if (vendorId !== null && status !== null) {
-        res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
-    } else if (vendorId !== null && status === null) {
-        res.send(poSampleData.filter(po => po.vendorId === vendorId))
-    } else if (vendorId === null && status !== null) {
-        res.send(poSampleData.filter(po => po.status === status))
-    }else if(vendorId === null && status === null){
-        res.send(poSampleData)
-    }else {
-        res.send(poSampleData)
-    }
+    // if (vendorId !== null && status !== null) {
+    //     res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
+    // } else if (vendorId !== null && status === null) {
+    //     res.send(poSampleData.filter(po => po.vendorId === vendorId))
+    // } else if (vendorId === null && status !== null) {
+    //     res.send(poSampleData.filter(po => po.status === status))
+    // }else if(vendorId === null && status === null){
+    //     res.send(poSampleData)
+    // }else {
+    //     res.send(poSampleData)
+    // }
+
+    res.send(poSampleData)
 
 
 })
