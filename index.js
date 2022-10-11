@@ -1,7 +1,16 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 4000
 
+function vendors() {
+    const vendorEntries = poSampleData.map(po => ([po.vendorId, po.vendorName]))
+    const vendorMap = new Map(vendorEntries)
+    return Array.from(vendorMap.entries()).map(e => ({id: e[0], name: e[1]}))
+}
+
+function getVendor(id) {
+    return vendors().find(v => v.id === parseInt(id))
+}
 
 app.use(express.json());
 
@@ -10,24 +19,29 @@ app.get('/', (req, res) => {
 })
 
 app.get('/vendors.json', (req, res) => {
-
-    const vendorEntries = poSampleData.map(po => ([po.vendorId, po.vendorName]))
-    const vendorMap = new Map(vendorEntries)
-    const vendors = Array.from(vendorMap.entries()).map(e => ({id: e[0], name: e[1]}))
-    res.send(vendors)
+    res.send(vendors())
 
 })
 
 app.get('/pos.json', (req, res) => {
-    const vv = req.query.vendorId
-    const vendorId = vv ? parseInt(vv) : null;
+    let q = req.query;
+    const vendorId1 = q.vendorId
+    const status1 = q.status
+    const status = status1==='' ? null: status1;
+    const vendorId = vendorId1 ? parseInt(vendorId1) : null;
 
-    if (vendorId !== null) {
+    if (vendorId !== null && status !== null) {
+        res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
+    } else if (vendorId !== null && status === null) {
         res.send(poSampleData.filter(po => po.vendorId === vendorId))
-    } else {
+    } else if (vendorId === null && status !== null) {
+        res.send(poSampleData.filter(po => po.status === status))
+    }else if(vendorId === null && status === null){
+        res.send(poSampleData)
+    }else {
         res.send(poSampleData)
     }
-    console.log("ii", ii);
+
 
 })
 
@@ -43,7 +57,22 @@ app.get('/po.json', (req, res) => {
 
 app.put('/po.json', (req, res) => {
     console.log('Got body:', req.body);
-    poSampleData.push( req.body)
+    const po = req.body;
+    console.log("po.id", po.id)
+    if (po.id) {
+        console.log(111)
+        const po1 = poSampleData.find(po => po.id === po.id)
+        po1.vendorId = po.vendorId
+        po1.vendorName = getVendor(po.vendorId).name
+        po1.requestDate = po.requestDate
+        po1.status = po.status
+    } else {
+        console.log(222)
+        po.id = nextId();
+        po.vendorName = getVendor(po.vendorId).name
+        poSampleData.push(po)
+    }
+
     res.sendStatus(200);
 });
 
@@ -51,6 +80,13 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
 
+function nextId() {
+    let max = 0
+    for (const po of poSampleData) {
+        if (po.id > max) max = po.id
+    }
+    return max + 1
+}
 
 const poSampleData = [
     {
