@@ -30,9 +30,6 @@ app.get('/pos.json', (req, res) => {
     const status = status1 === '' || status1 === undefined ? null : status1;
     const vendorId = vendorId1 ? parseInt(vendorId1) : null;
 
-    console.log(vendorId);
-    console.log(status);
-
     if (vendorId !== null && status !== null) {
         res.send(poSampleData.filter(po => po.vendorId === vendorId && po.status === status))
     } else if (vendorId !== null && status === null) {
@@ -45,34 +42,25 @@ app.get('/pos.json', (req, res) => {
         res.send(poSampleData)
     }
 
-    // res.send(poSampleData)
-
-
 })
 
 app.get('/po.json', (req, res) => {
     const ii = req.query.id
 
     const id = parseInt(ii)
-    console.log("id", id);
     const po = poSampleData.find(po => po.id === id)
-    console.log("po", po)
     res.send(po)
 })
 
 app.put('/po.json', (req, res) => {
-    console.log('Got body:', req.body);
     const po = req.body;
-    console.log("po.id", po.id)
     if (po.id) {
-        console.log(111)
         const po1 = poSampleData.find(po => po.id === po.id)
         po1.vendorId = po.vendorId
         po1.vendorName = getVendor(po.vendorId).name
         po1.requestDate = po.requestDate
         po1.status = po.status
     } else {
-        console.log(222)
         po.id = nextId();
         po.vendorName = getVendor(po.vendorId).name
         poSampleData.push(po)
